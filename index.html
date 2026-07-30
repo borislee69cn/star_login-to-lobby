@@ -521,7 +521,7 @@ body{
 .gvw-btn .gvw-ic{font-size:30px;line-height:1;pointer-events:none;} /* 放大50%(20→30) */
 .gvw-btn .gvw-lb{font-size:18px;font-weight:700;letter-spacing:0;line-height:1;pointer-events:none; /* 放大50%(12→18) */
   text-shadow:0 1px 3px rgba(0,0,0,.7);}
-.gvw-btn.snapping{transition:left .18s ease,top .18s ease,transform .18s ease;}
+.gvw-btn.snapping{transition:left .18s ease,top .18s ease,transform .18s ease,opacity .18s ease;}
 /* ===== 遊戲館橫向抽屜選單(依遊戲設定 topMenu 顯示:'left'左上/'right'右上返回鍵旁) =====
    點擊把手由左至右展開功能鍵列;長方形底圖透明度約50% */
 #gvTopDrawer{position:absolute;left:0;top:14px;z-index:6;display:none;align-items:center;pointer-events:none;}
@@ -2569,6 +2569,10 @@ function gvIcSpan(cls, name, emoji){
       let d=Math.abs(((deg%360)+360)%360-180); if(d>180)d=360-d;
       const t=Math.max(0,1-d/STEP);
       b.style.transform=`scale(${(0.7+0.3*t).toFixed(3)})`;
+      /* 透明度階層:與抽屜維持橫向水平(180°)的焦點鍵為全不透明,
+         每偏離一個角距(36°)遞減 0.19,最低 0.40——愈遠愈淡,形成景深層次 */
+      const op = Math.max(0.40, 1 - (d/STEP)*0.19);
+      b.style.opacity = op.toFixed(3);
       const isFocus = d<STEP/2;
       b.style.zIndex = isFocus ? 2 : 1;     /* 焦點鍵置前 */
       b.classList.toggle('focus', isFocus); /* 焦點鍵底圖不透明 */
