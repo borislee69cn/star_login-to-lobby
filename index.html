@@ -1242,23 +1242,26 @@ body{
     background: linear-gradient(180deg, #262f57 0%, #1a2145 60%, #161c3a 100%);
     border: 3px solid #39406e;
     padding: 10px 12px 12px; text-align: center; cursor: pointer;
-    transition: transform .18s, border-color .18s, box-shadow .18s;
+    transition: transform .18s, border-color .18s, box-shadow .18s, border-width .18s, padding .18s;
     user-select: none;
   }
   .card:hover { transform: translateY(-5px); }
   /* 選中:綠色發光框 + 右上勾勾 */
   .card.selected {
     border-color: #35e05a;
-    box-shadow: 0 0 26px rgba(53,224,90,.55), inset 0 0 14px rgba(53,224,90,.15);
+    border-width: 4.5px;              /* 綠框加粗 50%:3px → 4.5px */
+    padding: 8.5px 10.5px 10.5px;     /* 回補多出的 1.5px 邊框,內容區與未選取時完全一致(不跳動) */
+    box-shadow: 0 0 34px rgba(53,224,90,.65), inset 0 0 18px rgba(53,224,90,.18);
     transform: translateY(-6px);
   }
+  /* 綠圈與白勾整體放大 50%:圈徑42→63,描邊3→4.5,勾22→33,懸掛偏移同步等比 */
   .card .check {
-    display: none; position: absolute; top: -14px; right: -12px; z-index: 3;
-    width: 42px; height: 42px; border-radius: 50%;
+    display: none; position: absolute; top: -21px; right: -18px; z-index: 3;
+    width: 63px; height: 63px; border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, #6dff8e, #17b83c);
-    border: 3px solid #eafff0; color: #fff; font-size: 22px; font-weight: bold;
+    border: 4.5px solid #eafff0; color: #fff; font-size: 33px; font-weight: bold;
     align-items: center; justify-content: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,.4);
+    box-shadow: 0 4.5px 15px rgba(0,0,0,.4);
   }
   .card.selected .check { display: flex; }
   /* 金手指:開啟後每張卡左上出現紅色 ✕ 可刪除角色(測試用) */
@@ -1289,10 +1292,41 @@ body{
 
   /* VIP 徽章 + 等級 */
   .vip-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px; }
+  /* VIP 徽章:沿用大廳 #vipBadge 的卡片造型(淺色金屬底版+圓角+描邊+皇冠SVG),
+     等比放大至 1920 選角畫布(1920/1172≒1.64:高32→52,圓角7→11,描邊2→3);
+     底版/描邊/皇冠/字色四項全由 --vip* 變數驅動,由等級類別 .v0~.v10 指定 */
   .vip {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 29px; font-weight: bold; color: #fff;
-    padding: 6px 20px; border-radius: 18px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 52px; padding: 0 16px; border-radius: 11px;
+    background: var(--vipPlate);
+    border: 3px solid var(--vipEdge);
+    box-shadow: 0 3px 8px rgba(0,0,0,.45), inset 0 2px 3px rgba(255,255,255,.55);
+    font-size: 29px; font-weight: bold; color: var(--vipTxt);
+    text-shadow: 0 1px 0 rgba(255,255,255,.45);
+    line-height: 1; white-space: nowrap;
+  }
+  .vip svg { width: 40px; height: 28px; flex: 0 0 auto; }
+  .vip svg path, .vip svg rect { fill: var(--vipCrown); }
+  .vip svg path { stroke: var(--vipCrownS); }
+
+  /* ===== VIP 0~10 階級配色:灰→銅→銀→藍→綠→碧→金→紫→橘→紅→鑽 =====
+     每階皆維持「淺色底版 + 同色系深色皇冠」的大廳配色關係 */
+  .vip.v0  { --vipPlate:linear-gradient(180deg,#f5f7fa,#d3dae5); --vipEdge:#94a0b3; --vipCrown:#6f7c90; --vipCrownS:#4e596b; --vipTxt:#3c4657; }
+  .vip.v1  { --vipPlate:linear-gradient(180deg,#ffeacf,#e8b784); --vipEdge:#b07535; --vipCrown:#8a5320; --vipCrownS:#5f3712; --vipTxt:#4a2c0e; }
+  .vip.v2  { --vipPlate:linear-gradient(180deg,#fbfdff,#cdd8e6); --vipEdge:#8e9db2; --vipCrown:#6b7d94; --vipCrownS:#46566b; --vipTxt:#37455a; }
+  .vip.v3  { --vipPlate:linear-gradient(180deg,#ddf0ff,#8fc4ee); --vipEdge:#3f7fb8; --vipCrown:#2a63c4; --vipCrownS:#1b4590; --vipTxt:#123a6b; }
+  .vip.v4  { --vipPlate:linear-gradient(180deg,#dcf9e4,#8bd9a4); --vipEdge:#3f9c62; --vipCrown:#23884a; --vipCrownS:#145c31; --vipTxt:#0f4d28; }
+  .vip.v5  { --vipPlate:linear-gradient(180deg,#d8f8f6,#86d8d2); --vipEdge:#2f9a94; --vipCrown:#14847d; --vipCrownS:#0b5a55; --vipTxt:#094b47; }
+  .vip.v6  { --vipPlate:linear-gradient(180deg,#fff4cf,#f0cd72); --vipEdge:#bc9024; --vipCrown:#a87a10; --vipCrownS:#6d4d05; --vipTxt:#5a4104; }
+  .vip.v7  { --vipPlate:linear-gradient(180deg,#f0e2ff,#bb92e8); --vipEdge:#7a48c0; --vipCrown:#6a35b4; --vipCrownS:#451f7c; --vipTxt:#3b1a6d; }
+  .vip.v8  { --vipPlate:linear-gradient(180deg,#ffe6d2,#f5ab74); --vipEdge:#c46a26; --vipCrown:#b25412; --vipCrownS:#7a3508; --vipTxt:#6a2d06; }
+  .vip.v9  { --vipPlate:linear-gradient(180deg,#ffdede,#f08c8c); --vipEdge:#c33c3c; --vipCrown:#b02626; --vipCrownS:#751313; --vipTxt:#661010; }
+  /* 頂階:虹彩底版 + 外圈光暈,與其他階明顯區隔 */
+  .vip.v10 {
+    --vipPlate:linear-gradient(135deg,#fff 0%,#ffe9fb 28%,#e2f0ff 52%,#fff6d8 78%,#fff 100%);
+    --vipEdge:#dca2ff; --vipCrown:#7a3fc8; --vipCrownS:#4b1d86; --vipTxt:#4b1d86;
+    box-shadow: 0 3px 8px rgba(0,0,0,.45), inset 0 2px 3px rgba(255,255,255,.6),
+                0 0 16px rgba(220,162,255,.75);
   }
   .lv { font-size: 29px; font-weight: bold; color: #dfe3ff; }
 
@@ -1301,6 +1335,20 @@ body{
   .cardCoinRow { margin: 10px 0; }
   .cardCoinRow .coinBar { width: 100%; max-width: none; height: 46px; }
   .cardCoinRow .coinValue { font-size: 26px; }
+  /* 選角卡片專屬覆寫:移除大廳基底的紫色邊框與粉色外發光,
+     底版改為與卡牌同色系(深藏藍)的凹槽——上緣暗、下緣微亮,外側下緣補高光唇邊。
+     僅作用於 .cardCoinRow,大廳頂欄與遊戲天bar的 .coinBar 不受影響 */
+  .cardCoinRow .coinBar {
+    border: none;
+    background: linear-gradient(180deg, #0b0f24 0%, #10152e 55%, #151b39 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(0,0,0,.90),            /* 上緣硬邊 */
+      inset 0 3px 7px rgba(0,0,0,.85),          /* 上緣內陰影:主要凹陷感 */
+      inset 0 -2px 4px rgba(255,255,255,.055),  /* 下緣內側微亮 */
+      0 1px 0 rgba(120,140,220,.22);            /* 外側下緣高光唇邊 */
+  }
+  /* 去掉 2px 邊框後,絕對定位的幣圖示會相對 padding box 左移 2px,回補維持原位 */
+  .cardCoinRow .coinIcon { left: -2px; }
 
   /* ===== 底部發光平台 + 按鈕 ===== */
   .platform {
@@ -1884,6 +1932,9 @@ function fmt(n) {
   return String(n);
 }
 
+/* VIP 等級 → 配色類別(v0~v10);超出範圍夾住,避免未定義等級沒有底色 */
+function vipCls(v){ return 'v' + Math.max(0, Math.min(10, Number(v) || 0)); }
+
 /* ===== 渲染卡片 ===== */
 function render() {
   const track = document.getElementById('cardTrack');
@@ -1897,7 +1948,7 @@ function render() {
       <div class="avatar" style="background:${c.bg}">${c.avatarImg ? `<img src="${c.avatarImg}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">` : c.avatar}</div>
       <div class="name">${c.name}</div>
       <div class="vip-row">
-        <span class="vip" style="background:${c.vipColor}">👑 VIP ${c.vip}</span>
+        <span class="vip ${vipCls(c.vip)}"><svg viewBox="0 0 26 18"><path d="M2 15 L1 5 L7 9.5 L13 2 L19 9.5 L25 5 L24 15 Z" stroke-width="1"/><rect x="2" y="15" width="22" height="2.4" rx="1"/></svg>VIP ${c.vip}</span>
         <span class="lv">Lv.${c.lv}</span>
       </div>
       <div class="cardCoinRow"><div class="coinBar gold"><div class="coinIcon"></div><div class="coinValue">${fmt(c.gold)}</div></div></div>
