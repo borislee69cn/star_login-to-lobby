@@ -1856,11 +1856,11 @@ body{
     <div class="setRow">
       <div class="setLabel">
         <span>背景音樂音量</span>
-        <span class="setVal" id="bgmVolVal">38%</span>
+        <span class="setVal" id="bgmVolVal">25%</span>
       </div>
       <div class="setSlider">
         <button class="setIcon" id="bgmMute" aria-label="靜音">🔇</button>
-        <input type="range" class="setRange" id="bgmVol" min="0" max="100" step="1" value="38">
+        <input type="range" class="setRange" id="bgmVol" min="0" max="100" step="1" value="25">
         <button class="setIcon" id="bgmMax" aria-label="最大音量">🔊</button>
       </div>
     </div>
@@ -2006,9 +2006,9 @@ const BGM_B64 = "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//t
   }
 
   /* ===== 背景音樂 =====
-     BGM_VOL  最終音量(BGM 不宜蓋過操作音;0.5 降低 25% → 0.375)
+     BGM_VOL  預設音量(BGM 不宜蓋過操作音;預設 25%,可於[設定]拖曳BAR調整 0~100%)
      BGM_FADE 淡入時間(毫秒):音量由 0 線性升到 BGM_VOL */
-  const BGM_VOL = 0.375, BGM_FADE = 3000, BGM_MIME = 'audio/mpeg';
+  const BGM_VOL = 0.25, BGM_FADE = 3000, BGM_MIME = 'audio/mpeg';
   /* 使用者於[設定]拖曳BAR調整的音量(0~1);預設＝設計值 BGM_VOL */
   let bgmUserVol = BGM_VOL;
   const bgm = document.getElementById('bgm');
@@ -3096,7 +3096,7 @@ document.getElementById('burgerBtn').addEventListener('click', () => {
   const valTxt  = document.getElementById('bgmVolVal');
   const muteBtn = document.getElementById('bgmMute');
   const maxBtn  = document.getElementById('bgmMax');
-  let lastVol = Number(range.value) || 38;   /* 靜音前音量,供再次點擊還原 */
+  let lastVol = Number(range.value) || 25;   /* 靜音前音量,供再次點擊還原 */
 
   /* 拖曳BAR 上色:已填滿段金色、未填滿段暗紫 */
   function paint(v){
@@ -3116,7 +3116,7 @@ document.getElementById('burgerBtn').addEventListener('click', () => {
   range.addEventListener('input', () => apply(range.value));
   muteBtn.addEventListener('click', () => {
     if(Number(range.value) > 0){ lastVol = Number(range.value); apply(0); }
-    else apply(lastVol || 38);
+    else apply(lastVol || 25);
   });
   maxBtn.addEventListener('click', () => apply(100));
 
