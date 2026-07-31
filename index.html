@@ -1896,9 +1896,9 @@ const BGM_B64 = "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//t
   }
 
   /* ===== 背景音樂 =====
-     BGM_VOL  最終音量(BGM 不宜蓋過操作音)
+     BGM_VOL  最終音量(BGM 不宜蓋過操作音;0.5 降低 25% → 0.375)
      BGM_FADE 淡入時間(毫秒):音量由 0 線性升到 BGM_VOL */
-  const BGM_VOL = 0.5, BGM_FADE = 3000, BGM_MIME = 'audio/mpeg';
+  const BGM_VOL = 0.375, BGM_FADE = 3000, BGM_MIME = 'audio/mpeg';
   const bgm = document.getElementById('bgm');
   /* 這三個給 bootStart() 用。必須宣告在 BGM 區塊之前——fadeInBgm() 會呼叫 bootStart(),
      而舊瀏覽器的 play() 回傳 undefined 時該呼叫是同步的,宣告在後面會撞上 TDZ。 */
