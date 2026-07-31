@@ -1058,6 +1058,97 @@ body{
   font-size:14.5px;font-weight:700;color:#ffd9a0;line-height:1.7;letter-spacing:1px;
 }
 
+/* ===================== 設定面板（漢堡選單 > 設定） =====================
+   面板色系沿用大廳紫霓虹＋金色標題；音量滑桿規範參考聊天室[設定]的拖曳BAR */
+#setMask{
+  position:absolute;inset:0;z-index:88;
+  background:rgba(8,1,14,.55);
+  opacity:0;pointer-events:none;
+  transition:opacity .2s ease;
+}
+#setMask.open{opacity:1;pointer-events:auto;}
+
+#setPanel{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%) scale(.86);
+  width:392px;padding:22px 26px 26px;z-index:89;
+  border-radius:18px;
+  background:linear-gradient(180deg,#3d0a55 0%,#2a0522 55%,#180313 100%);
+  border:2px solid var(--neon);
+  box-shadow:0 0 22px rgba(255,95,216,.5),inset 0 0 26px rgba(255,95,216,.10);
+  opacity:0;pointer-events:none;
+  transition:opacity .2s ease,transform .2s ease;
+}
+#setPanel.open{
+  opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;
+}
+#setTitle{
+  text-align:center;font-size:22px;font-weight:900;letter-spacing:6px;
+  background:linear-gradient(180deg,#fff3c4,#ffd21e);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));
+  margin-bottom:18px;
+}
+#setTitle .setGear{
+  -webkit-text-fill-color:#ffd21e;color:#ffd21e;
+  margin-right:8px;font-size:20px;letter-spacing:0;
+}
+#setClose{
+  position:absolute;right:14px;top:9px;width:34px;height:34px;
+  border:none;background:transparent;color:#e5c8f5;
+  font-size:22px;font-weight:700;line-height:1;cursor:pointer;
+  font-family:inherit;
+  transition:transform .12s,color .12s;
+}
+#setClose:active{transform:scale(.85);color:#fff;}
+
+.setRow{margin-bottom:16px;}
+.setRow:last-child{margin-bottom:0;}
+.setLabel{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:15px;font-weight:700;letter-spacing:2px;color:#e9d6ff;
+  margin-bottom:10px;
+}
+.setLabel .setVal{
+  font-size:15px;font-weight:900;letter-spacing:0;color:var(--gold);
+  min-width:50px;text-align:right;
+}
+.setSlider{display:flex;align-items:center;gap:10px;}
+.setIcon{
+  width:34px;height:34px;flex:0 0 auto;border-radius:50%;
+  border:1.5px solid rgba(255,95,216,.5);
+  background:rgba(255,95,216,.10);
+  color:#fff;font-size:15px;line-height:1;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .12s,border-color .12s,background .12s;
+}
+.setIcon:active{transform:scale(.9);}
+.setIcon.on{border-color:var(--gold);background:rgba(255,210,30,.18);}
+
+/* 拖曳BAR：已填滿段為金色（由 JS 以線性漸層即時繪製），滑鈕金色圓球 */
+.setRange{
+  -webkit-appearance:none;appearance:none;
+  flex:1;height:8px;border-radius:6px;
+  background:#3a1f5c;
+  outline:none;cursor:pointer;
+}
+.setRange::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:22px;height:22px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff3c4,#ffb400);
+  border:2px solid #fff;
+  box-shadow:0 0 8px rgba(255,210,30,.75);
+  cursor:pointer;
+}
+.setRange::-moz-range-thumb{
+  width:22px;height:22px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff3c4,#ffb400);
+  border:2px solid #fff;
+  box-shadow:0 0 8px rgba(255,210,30,.75);
+  cursor:pointer;
+}
+.setRange::-moz-range-track{background:transparent;}
+
 /* ===================== 點擊回饋 Toast ===================== */
 #toast{
   position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) scale(.8);
@@ -1756,6 +1847,25 @@ body{
     </div>
   </div>
 
+  <!-- ================= 設定面板（漢堡選單 > 設定） ================= -->
+  <div id="setMask"></div>
+  <div id="setPanel">
+    <div id="setTitle"><span class="setGear">⚙</span>設 定</div>
+    <button id="setClose" aria-label="關閉">✕</button>
+
+    <div class="setRow">
+      <div class="setLabel">
+        <span>背景音樂音量</span>
+        <span class="setVal" id="bgmVolVal">38%</span>
+      </div>
+      <div class="setSlider">
+        <button class="setIcon" id="bgmMute" aria-label="靜音">🔇</button>
+        <input type="range" class="setRange" id="bgmVol" min="0" max="100" step="1" value="38">
+        <button class="setIcon" id="bgmMax" aria-label="最大音量">🔊</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== 啟動畫面（開屏 Loading：LOGO + 進度條 → 點擊進入） ===== -->
   <div id="bootScreen">
     <!-- 背景為 HIT SLOT 主視覺;LOGO/光效/文字均已移除,僅保留滿版進度條
@@ -1899,6 +2009,8 @@ const BGM_B64 = "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//t
      BGM_VOL  最終音量(BGM 不宜蓋過操作音;0.5 降低 25% → 0.375)
      BGM_FADE 淡入時間(毫秒):音量由 0 線性升到 BGM_VOL */
   const BGM_VOL = 0.375, BGM_FADE = 3000, BGM_MIME = 'audio/mpeg';
+  /* 使用者於[設定]拖曳BAR調整的音量(0~1);預設＝設計值 BGM_VOL */
+  let bgmUserVol = BGM_VOL;
   const bgm = document.getElementById('bgm');
   /* 這三個給 bootStart() 用。必須宣告在 BGM 區塊之前——fadeInBgm() 會呼叫 bootStart(),
      而舊瀏覽器的 play() 回傳 undefined 時該呼叫是同步的,宣告在後面會撞上 TDZ。 */
@@ -1968,7 +2080,7 @@ const BGM_B64 = "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//t
     const t0 = performance.now();
     (function step(){
       const k = Math.min(1, (performance.now()-t0)/BGM_FADE);
-      const v = BGM_VOL * k;
+      const v = bgmUserVol * k;   /* 淡入期間亦即時反映使用者音量 */
       if(bgmMode === 'webaudio'){ if(again) again.gain.value = v; }
       else if(bgm) bgm.volume = v;
       if(k < 1) requestAnimationFrame(step);
@@ -1976,6 +2088,14 @@ const BGM_B64 = "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//t
     console.log('[BGM] 開始淡入(' + bgmMode + ')');
     bootStart();          /* 音樂就緒即開跑進度條,使 Loading 全程有音樂 */
   }
+
+  /* 對外:供 [設定] 面板的音量拖曳BAR 呼叫(v = 0~1)。
+     兩種播放模式共用;淡入尚未結束時由 step() 依 bgmUserVol 逐幀套用。 */
+  window.setBgmVolume = function(v){
+    bgmUserVol = Math.max(0, Math.min(1, Number(v) || 0));
+    if(bgmMode === 'webaudio'){ if(again) again.gain.value = bgmUserVol; }
+    else if(bgm) bgm.volume = bgmUserVol;
+  };
 
   /* 播放嘗試:瀏覽器禁止無手勢的有聲播放,故在資源就緒時、開屏點擊時、
      以及任何一次 pointerdown 都各試一次;bgmFading 旗標確保淡入只跑一次。 */
@@ -2967,6 +3087,55 @@ document.getElementById('burgerBtn').addEventListener('click', () => {
   if(open){ gtPanel.classList.remove('open'); gtWrap.classList.remove('open'); } /* 互斥 */
 });
 /* 點選項目不關閉選單，需再次點擊漢堡鍵才關閉（規範同遊戲類型選單） */
+
+/* ================= 設定面板（漢堡選單 > 設定：背景音樂音量） ================= */
+(function initSettings(){
+  const mask    = document.getElementById('setMask');
+  const panel   = document.getElementById('setPanel');
+  const range   = document.getElementById('bgmVol');
+  const valTxt  = document.getElementById('bgmVolVal');
+  const muteBtn = document.getElementById('bgmMute');
+  const maxBtn  = document.getElementById('bgmMax');
+  let lastVol = Number(range.value) || 38;   /* 靜音前音量,供再次點擊還原 */
+
+  /* 拖曳BAR 上色:已填滿段金色、未填滿段暗紫 */
+  function paint(v){
+    range.style.background =
+      'linear-gradient(90deg,#ffd21e 0%,#ffb400 ' + v + '%,#3a1f5c ' + v + '%,#3a1f5c 100%)';
+    valTxt.textContent = v + '%';
+    muteBtn.classList.toggle('on', v === 0);
+    maxBtn.classList.toggle('on', v === 100);
+  }
+  function apply(v){
+    v = Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
+    range.value = v;
+    paint(v);
+    if(window.setBgmVolume) window.setBgmVolume(v / 100);
+  }
+
+  range.addEventListener('input', () => apply(range.value));
+  muteBtn.addEventListener('click', () => {
+    if(Number(range.value) > 0){ lastVol = Number(range.value); apply(0); }
+    else apply(lastVol || 38);
+  });
+  maxBtn.addEventListener('click', () => apply(100));
+
+  function openSet(){  mask.classList.add('open');    panel.classList.add('open'); }
+  function closeSet(){ mask.classList.remove('open'); panel.classList.remove('open'); }
+  document.getElementById('setClose').addEventListener('click', closeSet);
+  mask.addEventListener('click', closeSet);
+
+  /* 由漢堡選單的 [設定] 開啟(開啟同時收攏選單) */
+  burgerPanel.addEventListener('click', e => {
+    const item = e.target.closest('.gtItem');
+    if(!item || item.dataset.fn !== '設定') return;
+    burgerPanel.classList.remove('open');
+    openSet();
+  });
+
+  apply(range.value);   /* 初始化:同步顯示與實際音量 */
+})();
+
 
 /* ================= 公告活動快訊頁 ================= */
 const noticePage = document.getElementById('noticePage');
