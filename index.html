@@ -822,7 +822,8 @@ body{
 }
 #gameLoad.on{display:block;}
 #gameLoad.fade{opacity:0;pointer-events:none;}  /* 淡出期間讓點擊穿透,不卡住 450ms */
-#glLoad{position:absolute;left:0;right:0;bottom:96px;z-index:2;text-align:center;}
+/* bottom 與開屏 #bootLoad 一致(39px),兩處進度條位置統一 */
+#glLoad{position:absolute;left:0;right:0;bottom:39px;z-index:2;text-align:center;}
 #glBarWrap{
   position:relative;width:100%;height:12px;   /* 與開屏同步縮減 25% */
   background:rgba(12,4,30,.72);
@@ -1155,8 +1156,9 @@ body{
 
 /* ---- 進度條區 ---- */
 #bootLoad{
-  /* 進度條滿版:左右貼齊畫面邊界 */
-  position:absolute;left:0;right:0;bottom:96px;
+  /* 進度條滿版:左右貼齊畫面邊界。
+     bottom 96→39:條高 12px,使條中心落在距畫面底 45px(依標註位置) */
+  position:absolute;left:0;right:0;bottom:39px;
   width:auto;z-index:2;text-align:center;
 }
 #bootBarWrap{
