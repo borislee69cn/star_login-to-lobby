@@ -3447,12 +3447,24 @@ function giSetRank(k){
   });
   grbSyncBar();
 }
-/* 點擊左側任一榜單鍵:切換榜單的同時自動把抽屜向右展開(已展開則維持展開,不會收回),
-   讓使用者不必再多按一次把手就能看到該榜單畫面。展開後同步一次拖曳BAR。 */
+/* 點擊左側榜單鍵:
+   ├ 點「不同」的榜單鍵 → 切換榜單並確保抽屜展開(已展開則維持展開,不會閃一下)
+   └ 點「同一顆」榜單鍵 → 當作該鍵的開關,展開中則收合、收合中則展開
+   例:首次點[倍數月榜] 展開 → 再點[倍數月榜] 收合 → 再點又展開。
+   收合時只動抽屜,選取狀態(.on / giRankRx)保留,再展開仍是同一份榜單。
+   任一情況都同步一次拖曳BAR。 */
 document.querySelectorAll('#giRanks .giRank').forEach(b => {
   b.addEventListener('click', () => {
-    giSetRank(b.dataset.rk);
     const gi = document.getElementById('gameInfo');
+    if(!gi) return;
+    const k = b.dataset.rk;
+    /* 判定「同一顆」以目前選定的 giRank 為準,而非 DOM 上的 .on,兩者恆同步但前者最直接 */
+    if(k === giRank && gi.classList.contains('giDrawerOpen')){
+      gi.classList.remove('giDrawerOpen');   /* 重複點擊 → 收合 */
+      grbSyncBar();
+      return;
+    }
+    giSetRank(k);
     gi.classList.add('giDrawerOpen');
     gi.classList.add('giRankSparkOn');   /* 有動作後才點亮框線巡遊光點 */
     grbSyncBar();
