@@ -1240,14 +1240,15 @@ body{
 }
 #gameLoad.on{display:block;}
 #gameLoad.fade{opacity:0;pointer-events:none;}  /* 淡出期間讓點擊穿透,不卡住 450ms */
-/* bottom 與開屏 #bootLoad 一致(39px)。左右各內縮 25%(舞台 1172 → 各 293px),
+/* 規格與開屏 #bootLoad 完全一致:左右各內縮 10%(舞台 1172 → 各 117.2px,條寬 937.6px),
+   條高 10.8px、bottom 39.6px(垂直中心維持距畫面底 47px)。
    進度條不再滿版貼邊,載入背景圖左右兩側維持完整,不會被橫向切成上下兩塊。 */
-#glLoad{position:absolute;left:25%;right:25%;bottom:39px;z-index:2;text-align:center;}
+#glLoad{position:absolute;left:10%;right:10%;bottom:39.6px;z-index:2;text-align:center;}
 #glBarWrap{
   /* 原本滿版貼邊時左右邊線是切掉的(border-left/right:none);現在已內縮成浮動條,
-     四邊邊線補齊,兩端才有收頭;圓角 8px = 外緣總高 16px 的一半,呈藥丸形。
+     四邊邊線補齊,兩端才有收頭;圓角 7.4px = 外緣總高 14.8px 的一半,呈藥丸形。
      規格與開屏 #bootBarWrap 完全一致。 */
-  position:relative;width:100%;height:12px;border-radius:8px;   /* 與開屏同步縮減 25% */
+  position:relative;width:100%;height:10.8px;border-radius:7.4px;   /* 與開屏同規:12→10.8(內縮10%) */
   background:rgba(12,4,30,.72);
   border:2px solid rgba(120,255,140,.55);
   box-shadow:0 0 18px rgba(80,230,100,.35), inset 0 2px 6px rgba(0,0,0,.6);
@@ -1578,16 +1579,17 @@ body{
 
 /* ---- 進度條區 ---- */
 #bootLoad{
-  /* 左右各內縮 25%(與遊戲載入畫面 #glLoad 統一),進度條不再貼齊畫面邊界,
-     主視覺左右兩側維持完整,不會被橫向切斷。
-     bottom 96→39:條高 12px,使條中心落在距畫面底 45px(依標註位置) */
-  position:absolute;left:25%;right:25%;bottom:39px;
+  /* 左右內縮 25% → 各外擴 15% → 10%(與遊戲載入畫面 #glLoad 統一),條寬占畫面 80%。
+     條高 12→10.8px(內縮10%),外緣總高 16→14.8px;bottom 39→39.6px,
+     使條的垂直中心維持在距畫面底 47px 不位移。 */
+  position:absolute;left:10%;right:10%;bottom:39.6px;
   width:auto;z-index:2;text-align:center;
 }
 #bootBarWrap{
   /* 邊框外緣總高 12+2+2=16px,border-radius 取半高 8px 即完整藥丸形。
-     wrap 已有 overflow:hidden,綠色填充會自動被裁成同樣圓角,#bootBarFill 不需另設。 */
-  position:relative;width:100%;height:12px;border-radius:8px; /* 高度 26→16→12(再縮減25%) */
+     wrap 已有 overflow:hidden,綠色填充會自動被裁成同樣圓角,#bootBarFill 不需另設。
+     條高內縮 10% 後外緣總高 14.8px,圓角同步取半高 7.4px。 */
+  position:relative;width:100%;height:10.8px;border-radius:7.4px; /* 高度 26→16→12→10.8(再內縮10%) */
   background:rgba(12,4,30,.72);
   border:2px solid rgba(120,255,140,.55); /* 亮綠外框:內縮後四邊補齊,兩端有收頭 */
   box-shadow:0 0 18px rgba(80,230,100,.35), inset 0 2px 6px rgba(0,0,0,.6);
