@@ -881,11 +881,62 @@ body{
   pointer-events:auto;              /* 擋住下層遊戲畫面的按鍵 */
 }
 #gameInfo.on{display:block;}
+
+/* ===== 說明頁動態背景特效(紫色光束 + 上升星塵) =====
+   說明頁底圖 infoImg 是不透明 JPG,特效無法真的墊在它「後面」,
+   故改用 mix-blend-mode:screen 疊在上層:screen 只會「加亮」,
+   底圖原本的黑處吃到紫光、亮處(金框/面板)幾乎不受影響,視覺上等同背景在發光。
+   所有數值量自來源影片(1162×754 / 30fps / 10.4s):
+     · 底色漸層  頂端 mean RGB(146,37,133) → 底端 (48,1,36)
+     · 星塵位移  上升 9px/s、左飄 3px/s(依舞台 1172×660 換算為 8 / -3)
+     · 星塵數量  單幀約 163 顆,中位面積 19px²(直徑約 5px)
+   總亮度由 --giFx 一個變數控制,要調整濃淡改這個就好。 */
+#gameInfo{--giFx:.85;}
+#giFx{
+  position:absolute;inset:0;z-index:1;
+  pointer-events:none;overflow:hidden;
+  opacity:var(--giFx);
+  mix-blend-mode:screen;
+}
+/* 頂部洋紅暈染:對應影片上緣那片最亮的洋紅。
+   下緣收在舞台 y≈211,與光束的平均長度一致,不會單獨拖到畫面中段。 */
+#giFx .fxTop{
+  position:absolute;left:-10%;top:-46%;width:120%;height:78%;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,
+    rgba(214,58,196,.55) 0%, rgba(150,20,132,.30) 42%, rgba(90,8,78,0) 72%);
+  animation:giFxBreath 9s ease-in-out infinite;
+}
+/* 光束:9 道獨立光柱,由左至右單向循環平移(不再是來回擺盪)。
+   共用同一組 keyframes 走完 1572px(左右各留 200px 在畫面外),週期 180s;
+   9 道以 -20s 為級距錯開負延遲 → 任一瞬間都均勻分布,間距 174.7px,
+   循環接點落在畫面外,看不出重來。實際速度約 8.7px/s,橫越全寬約 135 秒。
+   長度刻意做出高低差:150~265px(平均 207px),對應標註紅線的舞台 y≈200;
+   淡出交給每道自己的 mask(百分比相對各自高度),所以長短自動各異、不必逐道寫。
+   整組以 skewX(-2.5deg) 略微傾斜,與來源影片的光束角度一致。 */
+#giFx .fxBeams{position:absolute;inset:0;transform:skewX(-2.5deg);}
+#giFx .fxBeams i{
+  position:absolute;top:-24px;left:-200px;display:block;
+  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.95) 0%,rgba(0,0,0,.75) 40%,rgba(0,0,0,.30) 72%,rgba(0,0,0,0) 100%);
+          mask-image:linear-gradient(180deg,rgba(0,0,0,.95) 0%,rgba(0,0,0,.75) 40%,rgba(0,0,0,.30) 72%,rgba(0,0,0,0) 100%);
+  animation:giFxFlow 180s linear infinite;
+  will-change:transform;
+}
+#giFx .fxBeams i:nth-child(1){width:150px;height:255px;animation-delay:-0s;background:linear-gradient(90deg,rgba(236,120,224,0) 0%,rgba(236,120,224,.30) 50%,rgba(236,120,224,0) 100%);}
+#giFx .fxBeams i:nth-child(2){width:96px;height:175px;animation-delay:-20s;background:linear-gradient(90deg,rgba(255,170,246,0) 0%,rgba(255,170,246,.22) 50%,rgba(255,170,246,0) 100%);}
+#giFx .fxBeams i:nth-child(3){width:176px;height:220px;animation-delay:-40s;background:linear-gradient(90deg,rgba(196,54,180,0) 0%,rgba(196,54,180,.28) 50%,rgba(196,54,180,0) 100%);}
+#giFx .fxBeams i:nth-child(4){width:72px;height:150px;animation-delay:-60s;background:linear-gradient(90deg,rgba(246,150,236,0) 0%,rgba(246,150,236,.20) 50%,rgba(246,150,236,0) 100%);}
+#giFx .fxBeams i:nth-child(5){width:132px;height:240px;animation-delay:-80s;background:linear-gradient(90deg,rgba(206,64,190,0) 0%,rgba(206,64,190,.26) 50%,rgba(206,64,190,0) 100%);}
+#giFx .fxBeams i:nth-child(6){width:108px;height:190px;animation-delay:-100s;background:linear-gradient(90deg,rgba(236,120,224,0) 0%,rgba(236,120,224,.24) 50%,rgba(236,120,224,0) 100%);}
+#giFx .fxBeams i:nth-child(7){width:190px;height:265px;animation-delay:-120s;background:linear-gradient(90deg,rgba(186,44,170,0) 0%,rgba(186,44,170,.28) 50%,rgba(186,44,170,0) 100%);}
+#giFx .fxBeams i:nth-child(8){width:84px;height:165px;animation-delay:-140s;background:linear-gradient(90deg,rgba(255,170,246,0) 0%,rgba(255,170,246,.18) 50%,rgba(255,170,246,0) 100%);}
+#giFx .fxBeams i:nth-child(9){width:144px;height:205px;animation-delay:-160s;background:linear-gradient(90deg,rgba(226,96,214,0) 0%,rgba(226,96,214,.25) 50%,rgba(226,96,214,0) 100%);}
+@keyframes giFxFlow{from{transform:translate3d(0,0,0);}to{transform:translate3d(1572px,0,0);}}
+@keyframes giFxBreath{0%,100%{opacity:.82;}50%{opacity:1;}}
 #gameInfo.fade{opacity:0;pointer-events:none;}
 /* 左下角個人資訊:圖上原有的頭像/暱稱/金額已抹除,改由此層帶入登入角色資料。
    座標量自原圖(頭像 x15~83 y545~613、暱稱 x128~213 y552~571、金額 x128~254 y580~611),
    再依 cover 縮放 1.01695 換算至舞台。金幣圖示為靜態美術,保留在圖上不動。 */
-#giMe{position:absolute;inset:0;pointer-events:none;}
+#giMe{position:absolute;inset:0;pointer-events:none;z-index:2;}   /* 高於 #giFx(1):頭像/暱稱/金額不被紫光洗色 */
 #giAvatar{
   /* 縮小 10%:70→63,維持原中心 (49,589) */
   position:absolute;left:18px;top:568px;width:63px;height:63px;
@@ -1166,7 +1217,7 @@ body{
    border-radius 17px 縮放後為 8.5px,與原框 17px 對 79px 高的比例完全相同;
    border 2px 縮放後為 1px —— 與主圖原線同粗,不再往下減(0.5px 會直接消失)。 */
 #giCurWipe{
-  position:absolute;left:286px;top:554px;width:525px;height:90px;z-index:3;
+  position:absolute;left:286px;top:554px;width:525px;height:90px;z-index:0;   /* 需低於 #giFx(1),否則不吃紫光會變黑洞 */
   background:#070706;pointer-events:none;
 }
 /* 面板上方標題:落在 wipe 抹除區的黑底上(y554~569.7 這段空白),
@@ -1243,7 +1294,7 @@ body{
    #giBtnSpec / #giBtnPlayArt 的 width/height 即上述舊框尺寸,一格不差。 */
 #giBtnWipe{
   position:absolute;left:820px;top:554px;width:348px;height:90px;
-  z-index:2;background:rgb(4,6,5);pointer-events:none;
+  z-index:0;background:rgb(4,6,5);pointer-events:none;   /* 需低於 #giFx(1),同上 */
 }
 #gameInfo .giBtnArt{
   position:absolute;z-index:3;pointer-events:none;   /* 純美術層,點擊仍由 .giHit 接手 */
@@ -2111,6 +2162,11 @@ body{
   <div id="gameView">
     <!-- 遊戲說明頁:背景圖與兩個熱區座標由 JS 依遊戲設定指派 -->
     <div id="gameInfo">
+      <div id="giFx">
+        <div class="fxTop"></div>
+        <div class="fxBeams"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <canvas id="giFxDust"></canvas>
+      </div>
       <div id="giDrawer">
         <div id="giDrawerMask"></div>
         <div id="giRankBoard">
@@ -3548,6 +3604,64 @@ function hideGameInfo(){
   gi.classList.add('fade');
   setTimeout(() => gi.classList.remove('on','fade'), 320);
 }
+/* ===== 說明頁動態背景:上升星塵(canvas) =====
+   參數全部量自來源影片:上升 9px/s、左飄 3px/s(依舞台 1172×660 換算為 8 / -3),
+   單幀約 163 顆、影片原始中位直徑約 5px,另加 6 顆較大的散景光斑;
+   目前經 PSIZE 統一縮小 50%,實際中位直徑約 2.5px。
+   光點以離屏 canvas 預先畫好一次,每幀只做 drawImage,不重建漸層。
+   說明頁未開啟(#gameInfo 沒有 .on)時只推進計時、不繪製,避免在大廳白耗效能。 */
+(function(){
+  const cv = document.getElementById('giFxDust');
+  const gi = document.getElementById('gameInfo');
+  if(!cv || !gi) return;
+  const ctx = cv.getContext('2d');
+  const W = 1172, H = 660, DPR = 2;
+  cv.width = W*DPR; cv.height = H*DPR; ctx.scale(DPR,DPR);
+
+  function sprite(sz, core){
+    const c = document.createElement('canvas'); c.width = c.height = sz*2;
+    const g = c.getContext('2d');
+    const rg = g.createRadialGradient(sz,sz,0,sz,sz,sz);
+    rg.addColorStop(0,   'rgba(255,255,255,'+core+')');
+    rg.addColorStop(.35, 'rgba(255,214,252,'+(core*.55)+')');
+    rg.addColorStop(1,   'rgba(236,140,226,0)');
+    g.fillStyle = rg; g.beginPath(); g.arc(sz,sz,sz,0,Math.PI*2); g.fill();
+    return c;
+  }
+  const DOT = sprite(6,1), BOKEH = sprite(22,.5);
+
+  const RISE = 8, DRIFT = -3;   /* px/s */
+  /* 粒子尺寸總縮放:1 = 影片原比例。0.5 = 所有星塵(含散景光斑)等比縮小 50%,
+     只動繪製尺寸,數量/速度/明滅/分布完全不變。要改大小改這一個值就好。 */
+  const PSIZE = .5;
+  const P = [];
+  for(let i=0;i<160;i++) P.push({x:Math.random()*W, y:Math.random()*H,
+    r:0.9+Math.random()*1.9, a:.35+Math.random()*.65,
+    tw:Math.random()*Math.PI*2, ts:.6+Math.random()*1.4, sp:.7+Math.random()*.7, big:false});
+  for(let i=0;i<6;i++)   P.push({x:Math.random()*W, y:Math.random()*H,
+    r:3+Math.random()*4, a:.18+Math.random()*.22,
+    tw:Math.random()*Math.PI*2, ts:.4+Math.random()*.5, sp:.5+Math.random()*.4, big:true});
+
+  let last = 0;
+  (function frame(t){
+    requestAnimationFrame(frame);
+    if(!gi.classList.contains('on')){ last = t; return; }
+    const dt = last ? Math.min((t-last)/1000, .05) : 0; last = t;
+    ctx.clearRect(0,0,W,H);
+    for(const p of P){
+      p.y -= RISE*p.sp*dt;
+      p.x += DRIFT*p.sp*dt;
+      p.tw += p.ts*dt;
+      if(p.y < -20){ p.y = H+20; p.x = Math.random()*W; }
+      if(p.x < -20){ p.x = W+20; }
+      const img = p.big ? BOKEH : DOT, s = p.r*(p.big ? 3.2 : 2.6)*PSIZE;
+      ctx.globalAlpha = p.a*(.55+.45*Math.sin(p.tw));
+      ctx.drawImage(img, p.x-s, p.y-s, s*2, s*2);
+    }
+    ctx.globalAlpha = 1;
+  })(0);
+})();
+
 /* 抽屜:點擊向右展開遮蔽遊戲特色區,再點收回原位 */
 document.getElementById('giDrawerBtn').addEventListener('click', () => {
   document.getElementById('gameInfo').classList.toggle('giDrawerOpen');
